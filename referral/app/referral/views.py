@@ -2,6 +2,7 @@ from rest_framework import generics, response, status, decorators, exceptions
 from django.utils.translation import gettext_lazy as _
 from referral.models import Referral
 from referral.serializer import ReferralSerializer,ReferralCreateSerializer
+from user.models import User
 # Create your views here.
 class ReferralList(generics.ListAPIView):
     """
@@ -27,14 +28,14 @@ class ReferralCreate(generics.CreateAPIView):
 @decorators.api_view(['PATCH'])
 def assign_referral_to_user(request):
     referral = Referral.objects.get(pk=request.data['referral_code'])
-    # referral.invited_user.add(request.data['invited_user'])
-    # referral.save()
-    if referral.user.id == request.data['invited_user']:
+    invited_user = User.objects.get(pk=request.data['invited_user'])
+    if invited_user in referral.invited_user.filter(is_active=True):
+        raise exceptions.ValidationError({"invited_user":_("This user has already been invited!")})
+    if referral.user == invited_user:
         raise exceptions.ValidationError({"invited_user":_("The referral owner can't be the invited user!")})
-    serializer = ReferralCreateSerializer(referral,data={"user":referral.user.id,"invited_user":[request.data['invited_user']]})
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    return response.Response(serializer.data, status=status.HTTP_200_OK)
+    referral.invited_user.add(invited_user)
+    referral.save()
+    return response.Response('done', status=status.HTTP_200_OK)
     
     
 class ReferralRetrieveAndUpdateAndDelete(generics.RetrieveUpdateDestroyAPIView):
