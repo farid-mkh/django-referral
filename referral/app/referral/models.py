@@ -11,7 +11,7 @@ class Referral(models.Model):
         editable=False
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    invited_user = models.ManyToManyField(User,related_name='referrals',null=True,blank=True)
+    invited_user = models.ManyToManyField(User,related_name='referrals')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

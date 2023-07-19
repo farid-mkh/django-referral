@@ -4,6 +4,13 @@
 
 In this project I've created models and views for user and referral code
 
+## Run App
+
+1. `cd referral`
+2. `source ./bin/activate`
+3. `cd app`
+4. `python manage.py runserver`
+
 ### Steps
 
 1. create app `django-admin startproject mysite`
@@ -19,6 +26,7 @@ INSTALLED_APPS = [
 3. run migration
 
 ```shell
+python manage.py makemigrations
 python manage.py migrate
 ```
 

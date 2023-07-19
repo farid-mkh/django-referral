@@ -5,15 +5,7 @@ from user.serializer import UserSerializer
 
 class ReferralSerializer(ModelSerializer):    
     
-    invited_user = UserSerializer(many=True)
-    
-    class Meta:
-        model = Referral
-        fields = '__all__'
-        
-class ReferralCreateSerializer(ModelSerializer):    
-    
-    invited_user = PrimaryKeyRelatedField(many=True,queryset = User.objects.all())
+    invited_user = UserSerializer(many=True,required=False)
     
     class Meta:
         model = Referral

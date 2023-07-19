@@ -1,7 +1,7 @@
 from rest_framework import generics, response, status, decorators, exceptions
 from django.utils.translation import gettext_lazy as _
 from referral.models import Referral
-from referral.serializer import ReferralSerializer,ReferralCreateSerializer
+from referral.serializer import ReferralSerializer
 from user.models import User
 # Create your views here.
 class ReferralList(generics.ListAPIView):
