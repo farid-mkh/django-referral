@@ -40,9 +40,10 @@ def assign_referral_to_user(request):
     referral.save()
     return response.Response(status=status.HTTP_204_NO_CONTENT)
     
-class ReferralRetrieveAndUpdateAndDelete(generics.RetrieveUpdateDestroyAPIView):
+class ReferralRetrieve(generics.RetrieveAPIView):
     """
-    Update, retrieve and delete referral codes
+    retrieve referral codes
     """
+    queryset = Referral.objects.all()
     model = Referral
     serializer_class = ReferralSerializer

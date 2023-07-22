@@ -54,3 +54,4 @@ python manage.py createsuperuser --email admin@example.com --username admin
 ## TODO
 
 -   [x] creating referral code has bug
+-   [ ] test for referral
