@@ -1,4 +1,4 @@
-from rest_framework import generics, response, status, decorators, exceptions
+from rest_framework import generics, response, status, decorators, exceptions, permissions
 from django.utils.translation import gettext_lazy as _
 from referral.models import Referral
 from referral.serializer import ReferralSerializer
@@ -26,17 +26,19 @@ class ReferralCreate(generics.CreateAPIView):
     
     
 @decorators.api_view(['PATCH'])
+@decorators.permission_classes([permissions.IsAuthenticated])
 def assign_referral_to_user(request):
-    referral = Referral.objects.get(pk=request.data['referral_code'])
-    invited_user = User.objects.get(pk=request.data['invited_user'])
-    if invited_user in referral.invited_user.filter(is_active=True):
+    try:
+        referral = Referral.objects.get(pk=request.data['referral_code'])
+    except:
+        raise exceptions.NotFound({"referral_code":_("Invalid referral code!")})
+    if request.user in referral.invited_user.filter(is_active=True):
         raise exceptions.ValidationError({"invited_user":_("This user has already been invited!")})
-    if referral.user == invited_user:
+    if referral.user == request.user:
         raise exceptions.ValidationError({"invited_user":_("The referral owner can't be the invited user!")})
-    referral.invited_user.add(invited_user)
+    referral.invited_user.add(request.user)
     referral.save()
-    return response.Response('done', status=status.HTTP_200_OK)
-    
+    return response.Response(status=status.HTTP_204_NO_CONTENT)
     
 class ReferralRetrieveAndUpdateAndDelete(generics.RetrieveUpdateDestroyAPIView):
     """
